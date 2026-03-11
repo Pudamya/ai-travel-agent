@@ -2,6 +2,7 @@
   "name": "ai-travel-agent",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,8 +10,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
+    "@langchain/community": "^1.1.23",
     "@langchain/openai": "^1.2.13",
     "@supabase/supabase-js": "^2.99.1",
     "axios": "^1.13.6",
