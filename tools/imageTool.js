@@ -4,15 +4,16 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+apiKey: process.env.OPENAI_API_KEY
 })
 
-export async function generateImage(place){
+export async function generateTravelImage(place){
 
- const img = await openai.images.generate({
-   model: "gpt-image-1",
-   prompt: `travel photography of ${place}`
- })
+const image = await openai.images.generate({
+model:"gpt-image-1",
+prompt:`travel photography of ${place}`
+})
 
- return img.data[0].url
+return image.data[0].url
+
 }
