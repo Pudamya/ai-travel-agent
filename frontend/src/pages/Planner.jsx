@@ -1,36 +1,58 @@
 import { useState } from "react"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 export default function Planner(){
 
-const [form,setForm] = useState({})
+const navigate = useNavigate()
 
-const submit = async()=>{
+const [from,setFrom] = useState("")
+const [to,setTo] = useState("")
+const [days,setDays] = useState(3)
 
-const res = await axios.post(
-"http://localhost:3000/plan-trip",
-form
-)
+async function generate(){
 
-localStorage.setItem("trip",JSON.stringify(res.data))
+const res = await axios.post("http://localhost:3000/travel",{
+from,
+to,
+days
+})
 
-window.location="/results"
+navigate("/results",{state:res.data})
 
 }
 
 return(
 
-<div>
+<div className="planner">
 
-<h2>Plan Your Trip</h2>
+<h1>Plan Your Trip</h1>
 
-<input placeholder="From" onChange={e=>setForm({...form,from:e.target.value})}/>
+<div className="form">
 
-<input placeholder="Destination" onChange={e=>setForm({...form,to:e.target.value})}/>
+<input
+placeholder="From"
+value={from}
+onChange={(e)=>setFrom(e.target.value)}
+/>
 
-<input placeholder="Travelers" onChange={e=>setForm({...form,count:e.target.value})}/>
+<input
+placeholder="Destination"
+value={to}
+onChange={(e)=>setTo(e.target.value)}
+/>
 
-<button onClick={submit}>Generate Plan</button>
+<input
+type="number"
+value={days}
+onChange={(e)=>setDays(e.target.value)}
+/>
+
+<button onClick={generate}>
+Generate AI Plan
+</button>
+
+</div>
 
 </div>
 

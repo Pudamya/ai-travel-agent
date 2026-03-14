@@ -1,12 +1,10 @@
-export default function ItineraryTimeline({plan}){
+export default function ImageGallery({image}){
 
 return(
 
-<div>
+<div className="gallery">
 
-<h2>Itinerary</h2>
-
-<p>{plan}</p>
+<img src={image} alt="destination"/>
 
 </div>
 

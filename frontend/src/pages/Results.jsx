@@ -1,31 +1,45 @@
-import MapView from "../components/MapView"
-import HotelCard from "../components/HotelCard"
+import { useLocation } from "react-router-dom"
 import FlightCard from "../components/FlightCard"
+import HotelCard from "../components/HotelCard"
+import ImageGallery from "../components/ImageGallery"
 import ItineraryTimeline from "../components/ItineraryTimeline"
 import AgentPanel from "../components/AgentPanel"
-import ImageGallery from "../components/ImageGallery"
 
 export default function Results(){
 
-const trip = JSON.parse(localStorage.getItem("trip"))
+const {state} = useLocation()
+
+if(!state) return <div>No results</div>
 
 return(
 
-<div>
-
-<h1>Trip Plan</h1>
-
-<MapView places={trip.places}/>
-
-<ImageGallery image={trip.image}/>
-
-<ItineraryTimeline plan={trip.plan}/>
-
-{trip.hotels.map(h=><HotelCard hotel={h}/>)}
-
-{trip.flights.map(f=><FlightCard flight={f}/>)}
+<div className="results">
 
 <AgentPanel/>
+
+<h2>Flights</h2>
+
+<div className="cards">
+{state.flights.map((f,i)=>(
+<FlightCard key={i} flight={f}/>
+))}
+</div>
+
+<h2>Hotels</h2>
+
+<div className="cards">
+{state.hotels.map((h,i)=>(
+<HotelCard key={i} hotel={h}/>
+))}
+</div>
+
+<h2>Travel Images</h2>
+
+<ImageGallery image={state.image}/>
+
+<h2>Itinerary</h2>
+
+<ItineraryTimeline plan={state.plan}/>
 
 </div>
 

@@ -1,12 +1,12 @@
-export default function ImageGallery({image}){
+export default function HotelCard({hotel}){
 
 return(
 
-<div>
+<div className="card">
 
-<h3>Destination Image</h3>
+<h3>{hotel.name}</h3>
 
-<img src={image} width="400"/>
+<p>Price per night: ${hotel.price}</p>
 
 </div>
 

@@ -15,6 +15,12 @@ dest_id:city
 }
 )
 
-return res.data.result.slice(0,5)
+return res.data.result.slice(0,5).map(h=>({
+
+name:h.hotel_name,
+price:h.min_total_price,
+rating:h.review_score
+
+}))
 
 }
