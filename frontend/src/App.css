@@ -908,3 +908,164 @@ input {
     grid-template-columns: 1fr;
   }
 }
+
+.page-planner-premium {
+  padding-top: 18px;
+}
+
+.plannerTop {
+  margin-bottom: 24px;
+}
+
+.plannerPremiumGrid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.plannerHeroPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.plannerHeroImage {
+  min-height: 430px;
+  border-radius: 28px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background-size: cover;
+  background-position: center;
+}
+
+.plannerHeroImageMain {
+  background-image:
+    linear-gradient(to top, rgba(2, 6, 23, 0.8), rgba(2, 6, 23, 0.18)),
+    url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80");
+}
+
+.plannerHeroOverlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 28px;
+  color: #fff;
+}
+
+.plannerHeroOverlay h2 {
+  margin: 10px 0 8px;
+  color: #fff;
+  font-size: 2rem;
+}
+
+.plannerHeroOverlay p {
+  margin: 0;
+  color: #dbeafe;
+  line-height: 1.7;
+  max-width: 540px;
+}
+
+.plannerBadge {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(103, 232, 249, 0.14);
+  color: #67e8f9;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.plannerMiniCards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.plannerMiniCard {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.plannerMiniCard svg {
+  color: #67e8f9;
+  margin-top: 2px;
+}
+
+.plannerMiniCard strong {
+  display: block;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.plannerMiniCard span {
+  color: #94a3b8;
+  font-size: 0.92rem;
+}
+
+.plannerCardPremium {
+  padding: 24px;
+  border-radius: 28px;
+}
+
+.plannerCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.fieldGridPremium {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.field label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.plannerSummaryBar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.summaryItem {
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.summaryItem strong {
+  color: #fff;
+  display: block;
+}
+
+.plannerSubmitBtn {
+  margin-top: 8px;
+}
+
+@media (max-width: 1024px) {
+  .plannerPremiumGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .plannerMiniCards,
+  .plannerSummaryBar,
+  .fieldGridPremium {
+    grid-template-columns: 1fr;
+  }
+
+  .plannerHeroImage {
+    min-height: 320px;
+  }
+}
