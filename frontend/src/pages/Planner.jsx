@@ -8,51 +8,54 @@ const navigate = useNavigate()
 
 const [from,setFrom] = useState("")
 const [to,setTo] = useState("")
-const [days,setDays] = useState(3)
+const [days,setDays] = useState(2)
 
 async function generate(){
 
-const res = await axios.post("http://localhost:3000/travel",{
-from,
-to,
-days
-})
+try{
+
+const res = await axios.post(
+"http://localhost:3000/travel",
+{from,to,days}
+)
 
 navigate("/results",{state:res.data})
+
+}catch(e){
+
+alert("Backend not responding")
+
+}
 
 }
 
 return(
 
-<div className="planner">
+<div style={{padding:40}}>
 
 <h1>Plan Your Trip</h1>
-
-<div className="form">
 
 <input
 placeholder="From"
 value={from}
-onChange={(e)=>setFrom(e.target.value)}
+onChange={e=>setFrom(e.target.value)}
 />
 
 <input
 placeholder="Destination"
 value={to}
-onChange={(e)=>setTo(e.target.value)}
+onChange={e=>setTo(e.target.value)}
 />
 
 <input
 type="number"
 value={days}
-onChange={(e)=>setDays(e.target.value)}
+onChange={e=>setDays(e.target.value)}
 />
 
 <button onClick={generate}>
-Generate AI Plan
+Generate Plan
 </button>
-
-</div>
 
 </div>
 

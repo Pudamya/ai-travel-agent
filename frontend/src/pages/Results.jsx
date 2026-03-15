@@ -1,9 +1,4 @@
 import { useLocation } from "react-router-dom"
-import FlightCard from "../components/FlightCard"
-import HotelCard from "../components/HotelCard"
-import ImageGallery from "../components/ImageGallery"
-import ItineraryTimeline from "../components/ItineraryTimeline"
-import AgentPanel from "../components/AgentPanel"
 
 export default function Results(){
 
@@ -13,33 +8,19 @@ if(!state) return <div>No results</div>
 
 return(
 
-<div className="results">
+<div style={{padding:40}}>
 
-<AgentPanel/>
+<h2>Weather</h2>
+<pre>{JSON.stringify(state.weather,null,2)}</pre>
 
 <h2>Flights</h2>
-
-<div className="cards">
-{state.flights.map((f,i)=>(
-<FlightCard key={i} flight={f}/>
-))}
-</div>
+<pre>{JSON.stringify(state.flights,null,2)}</pre>
 
 <h2>Hotels</h2>
+<pre>{JSON.stringify(state.hotels,null,2)}</pre>
 
-<div className="cards">
-{state.hotels.map((h,i)=>(
-<HotelCard key={i} hotel={h}/>
-))}
-</div>
-
-<h2>Travel Images</h2>
-
-<ImageGallery image={state.image}/>
-
-<h2>Itinerary</h2>
-
-<ItineraryTimeline plan={state.plan}/>
+<h2>AI Plan</h2>
+<pre>{state.plan}</pre>
 
 </div>
 

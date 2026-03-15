@@ -1,45 +1,38 @@
-import { useLocation } from "react-router-dom"
-import FlightCard from "../components/FlightCard"
-import HotelCard from "../components/HotelCard"
-import ImageGallery from "../components/ImageGallery"
-import ItineraryTimeline from "../components/ItineraryTimeline"
-import AgentPanel from "../components/AgentPanel"
+import { motion } from "framer-motion"
 
-export default function Results(){
+export default function AgentPanel(){
 
-const {state} = useLocation()
-
-if(!state) return <div>No results</div>
+const agents=[
+"Coordinator Agent",
+"Weather Agent",
+"Flights Agent",
+"Hotels Agent",
+"Places Agent",
+"Price Prediction Agent",
+"Planner Agent"
+]
 
 return(
 
-<div className="results">
+<div className="agentPanel">
 
-<AgentPanel/>
+<h3>AI Agents Working</h3>
 
-<h2>Flights</h2>
+{agents.map((a,i)=>(
 
-<div className="cards">
-{state.flights.map((f,i)=>(
-<FlightCard key={i} flight={f}/>
+<motion.div
+key={i}
+initial={{opacity:0,x:-50}}
+animate={{opacity:1,x:0}}
+transition={{delay:i*0.4}}
+className="agentItem"
+>
+
+⚙ {a}
+
+</motion.div>
+
 ))}
-</div>
-
-<h2>Hotels</h2>
-
-<div className="cards">
-{state.hotels.map((h,i)=>(
-<HotelCard key={i} hotel={h}/>
-))}
-</div>
-
-<h2>Travel Images</h2>
-
-<ImageGallery image={state.image}/>
-
-<h2>Itinerary</h2>
-
-<ItineraryTimeline plan={state.plan}/>
 
 </div>
 
