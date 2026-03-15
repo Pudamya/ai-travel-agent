@@ -11,13 +11,17 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-app.post("/plan-trip", async (req, res) => {
+app.get("/", (req,res)=>{
+res.send("AI Travel Agent Backend Running")
+})
+
+app.post("/travel", async (req,res)=>{
 
 try{
 
-const data = req.body
+console.log("Incoming request:",req.body)
 
-const result = await runTravelPlanner(data)
+const result = await runTravelPlanner(req.body)
 
 res.json(result)
 
@@ -25,12 +29,14 @@ res.json(result)
 
 console.error(err)
 
-res.status(500).send("AI planner error")
+res.status(500).json({
+error:"Travel planner failed"
+})
 
 }
 
 })
 
-app.listen(3000, () => {
+app.listen(3000,()=>{
 console.log("Backend running on port 3000")
 })
