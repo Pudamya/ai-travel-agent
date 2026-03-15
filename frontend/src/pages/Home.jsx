@@ -9,8 +9,7 @@ return(
 <h1>AI Travel Planner ✈️</h1>
 
 <p>
-Plan complete trips using AI agents.
-Flights • Hotels • Weather • Itinerary
+Plan complete trips using AI agents
 </p>
 
 <Link to="/planner">
