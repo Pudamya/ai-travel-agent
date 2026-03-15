@@ -1,16 +1,23 @@
+import { Link } from "react-router-dom"
+
 export default function Home(){
 
 return(
 
-<div>
+<div className="home">
 
-<h1>AI Travel Planner</h1>
+<h1>AI Travel Planner ✈️</h1>
 
-<a href="/planner">
+<p>
+Plan complete trips using AI agents.
+Flights • Hotels • Weather • Itinerary
+</p>
 
-<button>Start Planning</button>
-
-</a>
+<Link to="/planner">
+<button className="startBtn">
+Start Planning
+</button>
+</Link>
 
 </div>
 
