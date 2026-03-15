@@ -1,29 +1,46 @@
-import OpenAI from "openai"
+import axios from "axios"
 import dotenv from "dotenv"
 
 dotenv.config()
 
-const openai = new OpenAI({
-apiKey: process.env.OPENAI_API_KEY
-})
+export async function generateTravelImage(place) {
+  try {
+    const accessKey = process.env.UNSPLASH_ACCESS_KEY
 
-export async function generateTravelImage(place){
+    const res = await axios.get("https://api.unsplash.com/search/photos", {
+      params: {
+        query: `${place} skyline travel city landmark`,
+        per_page: 1,
+        orientation: "landscape",
+      },
+      headers: {
+        Authorization: `Client-ID ${accessKey}`,
+        "Accept-Version": "v1",
+      },
+      timeout: 10000,
+    })
 
-try{
+    const photo = res.data?.results?.[0]
 
-const img = await openai.images.generate({
-model:"gpt-image-1",
-prompt:`travel photography of ${place}`
-})
+    if (!photo) {
+      throw new Error("No Unsplash image found")
+    }
 
-return img.data[0].url
+    return {
+      imageUrl: photo.urls?.regular,
+      photographer: photo.user?.name || "Unknown photographer",
+      photographerUrl: photo.user?.links?.html || "https://unsplash.com",
+      unsplashUrl: photo.links?.html || "https://unsplash.com",
+    }
+  } catch (err) {
+    console.log("Unsplash hero image failed:", err.response?.data || err.message)
 
-}catch(err){
-
-console.log("Image generation failed")
-
-return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
-
-}
-
+    return {
+      imageUrl:
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80",
+      photographer: "Unsplash",
+      photographerUrl: "https://unsplash.com",
+      unsplashUrl: "https://unsplash.com",
+    }
+  }
 }
