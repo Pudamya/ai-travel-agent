@@ -1,16 +1,14 @@
-export default function FlightCard({flight}){
+export default function HotelCard({ hotel }) {
 
-return(
+return (
 
-<div className="card flight">
+<div className="card hotelCard">
 
-<h3>{flight.airline}</h3>
+<h3>{hotel.name}</h3>
 
-<p>Price: ${flight.price}</p>
+<p><strong>Rating:</strong> ⭐ {hotel.rating}</p>
 
-<p>Predicted: ${flight.predicted_price}</p>
-
-<p className="recommend">{flight.recommendation}</p>
+<p><strong>Price per night:</strong> ${hotel.price}</p>
 
 </div>
 
