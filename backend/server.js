@@ -9,20 +9,16 @@ dotenv.config()
 const app = express()
 
 /* -----------------------------
-   CORS CONFIGURATION
+   CORS CONFIG
 ------------------------------ */
 
 const corsOptions = {
   origin: "http://localhost:5173",
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"],
 }
 
 app.use(cors(corsOptions))
-
-// Handle preflight requests
-app.options("*", cors(corsOptions))
 
 /* -----------------------------
    MIDDLEWARE
@@ -31,7 +27,7 @@ app.options("*", cors(corsOptions))
 app.use(express.json())
 
 /* -----------------------------
-   HEALTH CHECK ROUTE
+   HEALTH CHECK
 ------------------------------ */
 
 app.get("/", (req, res) => {
@@ -39,11 +35,10 @@ app.get("/", (req, res) => {
 })
 
 /* -----------------------------
-   MAIN TRAVEL PLANNER ROUTE
+   MAIN TRAVEL ROUTE
 ------------------------------ */
 
 app.post("/travel", async (req, res) => {
-
   try {
 
     console.log("Incoming request:", req.body)
@@ -61,7 +56,6 @@ app.post("/travel", async (req, res) => {
     })
 
   }
-
 })
 
 /* -----------------------------
