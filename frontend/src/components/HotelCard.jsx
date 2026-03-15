@@ -2,7 +2,7 @@ export default function FlightCard({flight}){
 
 return(
 
-<div className="card">
+<div className="card flight">
 
 <h3>{flight.airline}</h3>
 
