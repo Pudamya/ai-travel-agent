@@ -12,7 +12,7 @@ const {state} = useLocation()
 
 if(!state) return <div>No results</div>
 
-const {weather,flights,hotels,plan,places} = state
+const {weather,flights,hotels,places,plan,image} = state
 
 return(
 
@@ -23,16 +23,21 @@ return(
 <AgentPanel/>
 
 <h2>Weather</h2>
-<p>{weather?.description} | {weather?.temp}°C</p>
+
+<p>
+Temperature: {weather.temperature}°C
+</p>
+
+<p>
+Condition: {weather.condition}
+</p>
 
 <h2>Flights</h2>
 
 <div className="cards">
 
 {flights?.map((f,i)=>(
-
 <FlightCard key={i} flight={f}/>
-
 ))}
 
 </div>
@@ -42,12 +47,17 @@ return(
 <div className="cards">
 
 {hotels?.map((h,i)=>(
-
 <HotelCard key={i} hotel={h}/>
-
 ))}
 
 </div>
+
+<h2>Destination</h2>
+
+<img
+src={image}
+style={{width:"400px",borderRadius:"10px"}}
+/>
 
 <h2>Places Map</h2>
 
