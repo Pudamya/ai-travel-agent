@@ -1,6 +1,12 @@
+body{
+font-family:Arial;
+background:#f1f5f9;
+margin:0;
+}
+
 .home{
-margin-top:100px;
 text-align:center;
+margin-top:120px;
 }
 
 .startBtn{
@@ -8,18 +14,48 @@ margin-top:20px;
 font-size:18px;
 }
 
-.timeline{
+.planner{
+text-align:center;
+margin-top:80px;
+}
+
+.form{
 display:flex;
-flex-direction:column;
-gap:10px;
+gap:15px;
+justify-content:center;
+margin-top:30px;
 }
 
-.flight{
-border-left:4px solid #4f46e5;
+input{
+padding:12px;
+border-radius:8px;
+border:1px solid #ddd;
 }
 
-.hotel{
-border-left:4px solid #22c55e;
+button{
+background:#4f46e5;
+color:white;
+border:none;
+padding:12px 24px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.results{
+padding:40px;
+}
+
+.cards{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 8px 20px rgba(0,0,0,0.1);
 }
 
 .flightCard{
@@ -30,8 +66,20 @@ border-left:4px solid #4f46e5;
 border-left:4px solid #22c55e;
 }
 
+.agentPanel{
+background:white;
+padding:20px;
+border-radius:12px;
+margin-bottom:30px;
+}
+
+.timeline{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
 .recommend{
-margin-top:10px;
+color:green;
 font-weight:bold;
-color:#16a34a;
 }
