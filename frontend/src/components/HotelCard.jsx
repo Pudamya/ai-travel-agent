@@ -1,17 +1,23 @@
-export default function HotelCard({hotel}){
+export default function HotelCard({ hotel }) {
+  return (
+    <div className="card hotelCard premiumCard">
+      <div className="cardTopRow">
+        <h3>{hotel.name || "Hotel"}</h3>
+        <span className="pill pill-green">Stay</span>
+      </div>
 
-return(
+      <p className="mutedText">{hotel.address || "Comfortable location for your trip"}</p>
 
-<div className="card hotelCard">
-
-<h3>{hotel.name}</h3>
-
-<p>Rating ⭐ {hotel.rating}</p>
-
-<p>Price per night: ${hotel.price}</p>
-
-</div>
-
-)
-
+      <div className="priceGrid">
+        <div className="priceBox">
+          <span className="label">Rating</span>
+          <strong>⭐ {hotel.rating || 4.0}</strong>
+        </div>
+        <div className="priceBox">
+          <span className="label">Estimated Price</span>
+          <strong>${hotel.price || "--"}</strong>
+        </div>
+      </div>
+    </div>
+  )
 }
