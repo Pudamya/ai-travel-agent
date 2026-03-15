@@ -14,7 +14,7 @@ const [loading,setLoading] = useState(false)
 async function generate(){
 
 if(!from || !to){
-alert("Please fill all fields")
+alert("Fill all fields")
 return
 }
 
@@ -23,17 +23,13 @@ try{
 setLoading(true)
 
 const res = await axios.post(
-"http://localhost:3000/travel",
-{
-from,
-to,
-days:Number(days)
-}
+"http://localhost:5000/travel",
+{from,to,days:Number(days)}
 )
 
 navigate("/results",{state:res.data})
 
-}catch(e){
+}catch(err){
 
 alert("Backend not responding")
 
@@ -52,7 +48,7 @@ return(
 <div className="form">
 
 <input
-placeholder="From (City)"
+placeholder="From City"
 value={from}
 onChange={e=>setFrom(e.target.value)}
 />
@@ -65,15 +61,12 @@ onChange={e=>setTo(e.target.value)}
 
 <input
 type="number"
-min="1"
 value={days}
 onChange={e=>setDays(e.target.value)}
 />
 
 <button onClick={generate}>
-
 {loading ? "Generating..." : "Generate Plan"}
-
 </button>
 
 </div>
