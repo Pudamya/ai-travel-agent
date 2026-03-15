@@ -4,25 +4,27 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const openai = new OpenAI({
-apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY
 })
 
 export async function generatePlan(data){
+
+try{
 
 const prompt = `
 Create a travel itinerary.
 
 Weather:
-${data.weather}
+${JSON.stringify(data.weather)}
 
 Places:
-${data.places}
+${JSON.stringify(data.places)}
 
 Hotels:
-${data.hotels}
+${JSON.stringify(data.hotels)}
 
 Flights:
-${data.flights}
+${JSON.stringify(data.flights)}
 `
 
 const completion = await openai.chat.completions.create({
@@ -34,4 +36,13 @@ messages:[
 })
 
 return completion.choices[0].message.content
+
+}catch(err){
+
+console.log("OpenAI planner failed")
+
+return "Sample itinerary: Visit main attractions, explore the city, and enjoy local food."
+
+}
+
 }
