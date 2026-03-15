@@ -21,3 +21,17 @@ border-left:4px solid #4f46e5;
 .hotel{
 border-left:4px solid #22c55e;
 }
+
+.flightCard{
+border-left:4px solid #4f46e5;
+}
+
+.hotelCard{
+border-left:4px solid #22c55e;
+}
+
+.recommend{
+margin-top:10px;
+font-weight:bold;
+color:#16a34a;
+}
