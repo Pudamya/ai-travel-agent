@@ -1,27 +1,45 @@
-export default function FlightCard({flight}){
+export default function FlightCard({ flight }) {
+  const currentFare = Number(flight.price || 0)
+  const predictedFare = Number(flight.predicted_price || 0)
+  const difference = predictedFare - currentFare
+  const isCheaperPrediction = difference < 0
 
-return(
+  return (
+    <div className="card flightCard premiumCard">
+      <div className="cardTopRow">
+        <h3>{flight.airline || "Airline"}</h3>
+        <span className="pill pill-indigo">{flight.flight || "Flight"}</span>
+      </div>
 
-<div className="card flightCard">
+      <p className="mutedText">
+        {flight.departure || "Origin"} → {flight.arrival || "Destination"}
+      </p>
 
-<h3>{flight.airline}</h3>
+      <div className="priceGrid">
+        <div className="priceBox">
+          <span className="label">Current Fare</span>
+          <strong>${currentFare}</strong>
+        </div>
+        <div className="priceBox">
+          <span className="label">Predicted Fare</span>
+          <strong>${predictedFare}</strong>
+        </div>
+      </div>
 
-<p>Flight: {flight.flight}</p>
+      <div className="insightBox">
+        <span className="label">Price Insight</span>
+        <strong>
+          {difference === 0
+            ? "Model expects similar pricing"
+            : isCheaperPrediction
+            ? `Model predicts about $${Math.abs(difference)} lower`
+            : `Model predicts about $${Math.abs(difference)} higher`}
+        </strong>
+      </div>
 
-<p>
-{flight.departure} → {flight.arrival}
-</p>
-
-<p>Price: ${flight.price}</p>
-
-<p>Predicted: ${flight.predicted_price}</p>
-
-<p className="recommend">
-{flight.recommendation}
-</p>
-
-</div>
-
-)
-
+      <p className={`recommend ${flight.recommendation === "Book now" ? "successText" : "warningText"}`}>
+        {flight.recommendation || "Recommendation unavailable"}
+      </p>
+    </div>
+  )
 }
