@@ -1,85 +1,910 @@
-body{
-font-family:Arial;
-background:#f1f5f9;
-margin:0;
+* {
+  box-sizing: border-box;
 }
 
-.home{
-text-align:center;
-margin-top:120px;
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(124, 58, 237, 0.14), transparent 24%),
+    radial-gradient(circle at top right, rgba(6, 182, 212, 0.12), transparent 28%),
+    linear-gradient(180deg, #0f172a 0%, #111827 45%, #0b1120 100%);
+  color: #e5eef8;
 }
 
-.startBtn{
-margin-top:20px;
-font-size:18px;
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
-.planner{
-text-align:center;
-margin-top:80px;
+button,
+input {
+  font: inherit;
 }
 
-.form{
-display:flex;
-gap:15px;
-justify-content:center;
-margin-top:30px;
+#root {
+  min-height: 100vh;
 }
 
-input{
-padding:12px;
-border-radius:8px;
-border:1px solid #ddd;
+.page {
+  width: min(1280px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 24px 0 48px;
 }
 
-button{
-background:#4f46e5;
-color:white;
-border:none;
-padding:12px 24px;
-border-radius:8px;
-cursor:pointer;
+.topbar,
+.subHeader,
+.resultsHero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
 }
 
-.results{
-padding:40px;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-.cards{
-display:flex;
-gap:20px;
-flex-wrap:wrap;
+.brand-badge {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+  color: white;
+  font-weight: 800;
+  font-size: 1.2rem;
+  box-shadow: 0 18px 45px rgba(6, 182, 212, 0.25);
 }
 
-.card{
-background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 8px 20px rgba(0,0,0,0.1);
+.brand h3 {
+  margin: 0;
+  color: #fff;
 }
 
-.flightCard{
-border-left:4px solid #4f46e5;
+.brand span {
+  color: #94a3b8;
+  font-size: 0.92rem;
 }
 
-.hotelCard{
-border-left:4px solid #22c55e;
+.topnav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #cbd5e1;
 }
 
-.agentPanel{
-background:white;
-padding:20px;
-border-radius:12px;
-margin-bottom:30px;
+.nav-cta,
+.primaryBtn,
+.secondaryBtn {
+  border-radius: 14px;
+  padding: 12px 18px;
+  transition: 0.25s ease;
 }
 
-.timeline{
-display:flex;
-flex-direction:column;
-gap:10px;
+.primaryBtn {
+  border: none;
+  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 20px 45px rgba(139, 92, 246, 0.28);
+  cursor: pointer;
 }
 
-.recommend{
-color:green;
-font-weight:bold;
+.primaryBtn:hover {
+  transform: translateY(-1px);
+}
+
+.secondaryBtn,
+.nav-cta,
+.backLink {
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(255, 255, 255, 0.04);
+  color: #e2e8f0;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 28px;
+  align-items: center;
+  padding: 56px 0 32px;
+}
+
+.hero-copy h1,
+.subHeaderBrand h1,
+.resultsHeroCopy h1 {
+  margin: 12px 0;
+  font-size: clamp(2.2rem, 5vw, 4.4rem);
+  line-height: 1.02;
+  color: #fff;
+}
+
+.hero-copy p,
+.subHeaderBrand p,
+.resultsHeroCopy p,
+.plannerInfo p {
+  color: #cbd5e1;
+  font-size: 1.04rem;
+  line-height: 1.7;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #67e8f9;
+  font-weight: 700;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.hero-stats,
+.plannerHighlights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.statCard,
+.miniInfoCard,
+.featureCard,
+.stepCard,
+.glassCard,
+.sectionCard,
+.plannerCard,
+.emptyStateCard {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(15, 23, 42, 0.64);
+  backdrop-filter: blur(14px);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.statCard,
+.miniInfoCard,
+.featureCard,
+.stepCard {
+  padding: 18px;
+}
+
+.statCard strong,
+.miniInfoCard strong,
+.featureCard h3,
+.stepCard h3 {
+  display: block;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.statCard span,
+.miniInfoCard span,
+.featureCard p,
+.stepCard p,
+.mutedText,
+.placeItem span,
+.agentItem p {
+  color: #94a3b8;
+}
+
+.hero-visual {
+  display: flex;
+  justify-content: center;
+}
+
+.glassCard {
+  width: 100%;
+  padding: 28px;
+  min-height: 320px;
+  background:
+    linear-gradient(145deg, rgba(139, 92, 246, 0.18), rgba(6, 182, 212, 0.14)),
+    rgba(15, 23, 42, 0.68);
+}
+
+.miniTitle {
+  color: #67e8f9;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.glassCard h3 {
+  margin-top: 0;
+  color: white;
+}
+
+.glassCard ul {
+  padding-left: 18px;
+  color: #dbeafe;
+  line-height: 1.9;
+}
+
+.section {
+  padding: 36px 0 12px;
+}
+
+.sectionHeading {
+  max-width: 760px;
+  margin-bottom: 18px;
+}
+
+.sectionHeading h2 {
+  color: #fff;
+  margin: 10px 0 0;
+}
+
+.featureGrid,
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.stepCard span {
+  display: inline-block;
+  color: #67e8f9;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.plannerShell {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 28px;
+  align-items: start;
+}
+
+.plannerCard {
+  padding: 24px;
+}
+
+.fieldGrid {
+  display: grid;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field label {
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+.field input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  outline: none;
+}
+
+.errorBox {
+  margin: 14px 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(239, 68, 68, 0.14);
+  color: #fecaca;
+  border: 1px solid rgba(248, 113, 113, 0.22);
+}
+
+.resultsHero {
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+.resultsHeroCopy,
+.heroImageCard {
+  flex: 1;
+}
+
+.summaryChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.chip,
+.sectionBadge,
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.chip,
+.sectionBadge {
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.pill-indigo {
+  background: rgba(99, 102, 241, 0.16);
+  color: #c7d2fe;
+}
+
+.pill-green {
+  background: rgba(34, 197, 94, 0.16);
+  color: #bbf7d0;
+}
+
+.heroImageCard {
+  min-height: 320px;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(15, 23, 42, 0.7);
+}
+
+.heroImage,
+.imageFallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.imageFallback {
+  display: grid;
+  place-items: center;
+  color: #94a3b8;
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 1.45fr 0.95fr;
+  gap: 22px;
+}
+
+.mainColumn,
+.sideColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.sectionCard {
+  padding: 22px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.3rem;
+}
+
+.weatherStats,
+.cardsGrid,
+.priceGrid {
+  display: grid;
+  gap: 14px;
+}
+
+.weatherStats,
+.priceGrid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.cardsGrid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.weatherStat,
+.priceBox,
+.insightBox,
+.placeItem,
+.agentItem,
+.timelineContent {
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.label {
+  display: block;
+  color: #94a3b8;
+  font-size: 0.84rem;
+  margin-bottom: 6px;
+}
+
+.weatherStat strong,
+.priceBox strong,
+.insightBox strong,
+.card h3 {
+  color: #fff;
+}
+
+.premiumCard {
+  padding: 18px;
+}
+
+.cardTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.insightBox {
+  margin-top: 14px;
+}
+
+.recommend {
+  margin-top: 14px;
+  font-weight: 700;
+}
+
+.successText {
+  color: #4ade80;
+}
+
+.warningText {
+  color: #facc15;
+}
+
+.agentList,
+.placeList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.agentItem {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.agentDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #22c55e, #06b6d4);
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.mapShell {
+  height: 360px;
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timelineItem {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.timelineMarker {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+
+.emptyInline {
+  color: #94a3b8;
+}
+
+.emptyStatePage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.emptyStateCard {
+  max-width: 520px;
+  padding: 32px;
+  text-align: center;
+}
+
+.emptyStateCard h1 {
+  color: white;
+}
+
+@media (max-width: 1024px) {
+  .hero,
+  .plannerShell,
+  .resultsHero,
+  .dashboardGrid,
+  .featureGrid,
+  .steps,
+  .hero-stats,
+  .plannerHighlights {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .topbar,
+  .subHeader,
+  .resultsHero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .topnav {
+    flex-wrap: wrap;
+  }
+
+  .weatherStats,
+  .priceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .page {
+    width: min(100% - 24px, 1280px);
+  }
+}
+.imageCredit {
+  margin-top: 10px;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.imageCredit a {
+  color: #67e8f9;
+}
+
+/* HERO SECTION */
+
+.resultsHero {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+/* IMAGE CARD */
+
+.heroImageCard {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  height: 300px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.heroImageCard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.35),
+    rgba(0,0,0,0)
+  );
+}
+
+/* IMAGE */
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* PHOTO CREDIT */
+
+.imageCredit {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #9ca3af;
+}
+
+.imageCredit a {
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+  .resultsHero {
+    grid-template-columns: 1fr;
+  }
+
+  .heroImageCard {
+    max-width: 100%;
+    height: 220px;
+  }
+}
+
+.itinerarySlider {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.itineraryTopBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.itineraryHeading {
+  margin: 6px 0 0;
+  color: #fff;
+  font-size: 1.3rem;
+}
+
+.sliderControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sliderBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  cursor: pointer;
+}
+
+.slideCounter {
+  color: #cbd5e1;
+  font-size: 0.92rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+.itinerarySlideCard {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 22px;
+  padding: 16px;
+}
+
+.itineraryImageWrap {
+  position: relative;
+  min-height: 320px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.itineraryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itineraryImageOverlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 18px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0));
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.itineraryImageOverlay span {
+  font-size: 0.8rem;
+  color: #93c5fd;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.itineraryContentWrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.itineraryBullets {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.itineraryBullet {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.bulletIndex {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: white;
+  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+}
+
+.itineraryBullet p {
+  margin: 0;
+  color: #e5eef8;
+  line-height: 1.6;
+}
+
+.sliderDots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sliderDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: rgba(148, 163, 184, 0.3);
+}
+
+.sliderDot.active {
+  width: 28px;
+  background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+}
+
+.placesSlider {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.placesPreviewHero {
+  position: relative;
+  height: 240px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.placesPreviewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placesPreviewOverlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 18px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.76), rgba(0, 0, 0, 0));
+  color: #fff;
+}
+
+.placesPreviewOverlay h3 {
+  margin: 0 0 6px;
+  color: #fff;
+}
+
+.placesPreviewOverlay p {
+  margin: 0;
+  color: #dbeafe;
+  line-height: 1.5;
+}
+
+.placesRating {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.placesPreviewControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.placesThumbRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.placeThumb {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 10px;
+  align-items: center;
+  text-align: left;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  color: #fff;
+}
+
+.placeThumb.active {
+  border-color: rgba(103, 232, 249, 0.55);
+  background: rgba(34, 211, 238, 0.08);
+}
+
+.placeThumb img {
+  width: 64px;
+  height: 54px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.placeThumb span {
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 1024px) {
+  .itinerarySlideCard {
+    grid-template-columns: 1fr;
+  }
+
+  .itineraryImageWrap {
+    min-height: 220px;
+  }
+
+  .placesThumbRow {
+    grid-template-columns: 1fr;
+  }
 }
