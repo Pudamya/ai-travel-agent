@@ -5,6 +5,9 @@ function cleanLine(line) {
     .replace(/^[-*]\s*/, "")
     .replace(/\*\*/g, "")
     .replace(/^#+\s*/, "")
+    .replace(/^--+$/, "")
+    .replace(/^—+$/, "")
+    .replace(/\s+/g, " ")
     .trim()
 }
 
@@ -24,7 +27,7 @@ function parseFallbackItinerary(plan, fallbackImage, destination) {
     .split("\n")
     .map(cleanLine)
     .filter(Boolean)
-    .filter((line) => line !== "---" && line !== "—")
+    .filter((line) => line && line !== "---" && line !== "—" && line !== "--")
 
   const dayHeaderRegex = /^day\s*\d+[:\-\s]/i
   const sections = []
