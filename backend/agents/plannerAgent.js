@@ -10,12 +10,20 @@ const ai = new GoogleGenAI({
 export async function generatePlan(data) {
   try {
     const prompt = `
-Create a ${data.days || 2}-day travel itinerary.
+You are an expert travel planner.
 
-From: ${data.from || "Unknown"}
-To: ${data.to || "Unknown"}
+Create a clean ${data.days || 2}-day travel itinerary.
 
-Weather:
+From:
+${data.from || "Unknown"}
+
+To:
+${data.to || "Unknown"}
+
+Travel dates:
+${data.startDate || "Unknown"} to ${data.endDate || "Unknown"}
+
+Weather summary:
 ${JSON.stringify(data.weather, null, 2)}
 
 Places:
@@ -27,7 +35,13 @@ ${JSON.stringify(data.hotels, null, 2)}
 Flights:
 ${JSON.stringify(data.flights, null, 2)}
 
-Return a clean day-by-day itinerary.
+Requirements:
+- Give a day-by-day itinerary
+- Consider the weather of the selected travel dates
+- Keep it realistic and tourist-friendly
+- Mention food, sightseeing, and relaxation
+- Do not include unnecessary separators like -- or ---
+- Do not output JSON
 `
 
     const response = await ai.models.generateContent({
