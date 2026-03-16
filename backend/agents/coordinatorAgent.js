@@ -103,6 +103,8 @@ export async function runTravelPlanner(data) {
     from: data.from,
     to: data.to,
     days: data.days,
+    startDate: data.startDate,
+    endDate: data.endDate,
     weather,
     places: enrichedPlaces,
     flights: flightsWithPrediction,
