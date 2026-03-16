@@ -53,7 +53,7 @@ function parseItineraryDays(plan) {
 export async function runTravelPlanner(data) {
   console.log("Planner input:", data)
 
-  const weather = await getWeather(data.to)
+  const weather = await getWeather(data.to, data.startDate, data.endDate)
   const places = await searchPlaces(data.to)
   const flights = await searchFlights(data.from, data.to)
   const hotels = await searchHotels(data.to)
