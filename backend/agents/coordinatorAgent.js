@@ -8,11 +8,26 @@ import { predictFlightPrice } from "../tools/pricePredictionTool.js"
 import { getPlaceImage } from "../tools/placeImageTool.js"
 
 function cleanLine(line) {
-  return line
+  return String(line || "")
     .replace(/^[-*]\s*/, "")
     .replace(/\*\*/g, "")
     .replace(/^#+\s*/, "")
+    .replace(/^--+$/, "")
+    .replace(/^—+$/, "")
+    .replace(/\s+/g, " ")
     .trim()
+}
+
+function isUsefulLine(line) {
+  if (!line) return false
+
+  const lower = line.toLowerCase()
+
+  if (lower === "--" || lower === "---" || lower === "—") return false
+  if (lower === "n/a") return false
+  if (lower.length < 2) return false
+
+  return true
 }
 
 function parseItineraryDays(plan) {
@@ -21,8 +36,7 @@ function parseItineraryDays(plan) {
   const lines = plan
     .split("\n")
     .map(cleanLine)
-    .filter(Boolean)
-    .filter((line) => line !== "---" && line !== "—")
+    .filter(isUsefulLine)
 
   const dayHeaderRegex = /^day\s*\d+[:\-\s]/i
   const sections = []
@@ -35,19 +49,118 @@ function parseItineraryDays(plan) {
         title: line,
         items: [],
       }
-    } else {
-      if (!current) {
-        current = {
-          title: "Trip Overview",
-          items: [],
-        }
-      }
+    } else if (current) {
       current.items.push(line)
     }
   }
 
   if (current) sections.push(current)
+
   return sections
+}
+
+function buildThemedQuery(destination, dayTitle, dayItems = []) {
+  const text = `${dayTitle} ${(dayItems || []).join(" ")}`.toLowerCase()
+
+  if (
+    text.includes("museum") ||
+    text.includes("gallery") ||
+    text.includes("architecture")
+  ) {
+    return `${destination} museum architecture landmark travel`
+  }
+
+  if (
+    text.includes("beach") ||
+    text.includes("coast") ||
+    text.includes("sea") ||
+    text.includes("bay") ||
+    text.includes("island")
+  ) {
+    return `${destination} beach coast ocean travel`
+  }
+
+  if (
+    text.includes("shopping") ||
+    text.includes("market") ||
+    text.includes("souvenir") ||
+    text.includes("mall")
+  ) {
+    return `${destination} shopping market street travel`
+  }
+
+  if (
+    text.includes("food") ||
+    text.includes("restaurant") ||
+    text.includes("cafe") ||
+    text.includes("dinner") ||
+    text.includes("lunch") ||
+    text.includes("breakfast")
+  ) {
+    return `${destination} food street local cuisine travel`
+  }
+
+  if (
+    text.includes("park") ||
+    text.includes("garden") ||
+    text.includes("nature") ||
+    text.includes("walk")
+  ) {
+    return `${destination} park garden nature travel`
+  }
+
+  if (
+    text.includes("mosque") ||
+    text.includes("temple") ||
+    text.includes("church") ||
+    text.includes("cathedral")
+  ) {
+    return `${destination} temple mosque church landmark travel`
+  }
+
+  if (
+    text.includes("night") ||
+    text.includes("skyline") ||
+    text.includes("city lights")
+  ) {
+    return `${destination} skyline night city travel`
+  }
+
+  if (
+    text.includes("arrival") ||
+    text.includes("check in") ||
+    text.includes("check-in") ||
+    text.includes("arrival day")
+  ) {
+    return `${destination} skyline city center travel`
+  }
+
+  if (
+    text.includes("departure") ||
+    text.includes("farewell") ||
+    text.includes("airport")
+  ) {
+    return `${destination} scenic farewell travel`
+  }
+
+  return `${destination} sightseeing attraction travel`
+}
+
+function fallbackDayImage(index, heroImage) {
+  const images = [
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1200&q=80",
+  ]
+
+  return (
+    heroImage ||
+    images[index % images.length] ||
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80"
+  )
 }
 
 export async function runTravelPlanner(data) {
@@ -55,26 +168,41 @@ export async function runTravelPlanner(data) {
 
   const weather = await getWeather(data.to, data.startDate, data.endDate)
   const places = await searchPlaces(data.to)
-  const flights = await searchFlights(data.from, data.to)
+  const rawFlights = await searchFlights(data.from, data.to)
   const hotels = await searchHotels(data.to)
   const image = await generateTravelImage(data.to)
 
   const enrichedPlaces = await Promise.all(
     (places || []).slice(0, 8).map(async (place, index) => {
       const placeImage = await getPlaceImage(
-        `${place.name || data.to} ${data.to} attraction travel`
+        `${place.name || data.to} ${data.to} attraction travel`,
+        index + 1
       )
 
       return {
         ...place,
-        id: index,
+        id: place.id ?? index,
         previewImage:
-          placeImage ||
-          image?.imageUrl ||
-          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+          placeImage || fallbackDayImage(index, image?.imageUrl),
       }
     })
   )
+
+  const flights = (rawFlights || []).filter((f) => {
+    const airline = String(f?.airline || "").trim().toLowerCase()
+    const departure = String(f?.departure || "").trim()
+    const arrival = String(f?.arrival || "").trim()
+    const price = Number(f?.price || 0)
+
+    return (
+      airline &&
+      airline !== "empty" &&
+      airline !== "n/a" &&
+      departure &&
+      arrival &&
+      price > 0
+    )
+  })
 
   const flightsWithPrediction = await Promise.all(
     flights.map(async (f) => {
@@ -113,50 +241,16 @@ export async function runTravelPlanner(data) {
 
   const parsedDays = parseItineraryDays(plan)
 
-  const fallbackDayImages = [
-    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
-    "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1200&q=80",
-  ]
-
   const itineraryDays = await Promise.all(
     parsedDays.map(async (day, index) => {
-      const keywords = (day.items || []).join(" ").toLowerCase()
-
-      let themedQuery = `${data.to} travel sightseeing`
-
-      if (keywords.includes("museum")) {
-        themedQuery = `${data.to} museum architecture travel`
-      } else if (keywords.includes("beach")) {
-        themedQuery = `${data.to} beach travel`
-      } else if (keywords.includes("market") || keywords.includes("shopping")) {
-        themedQuery = `${data.to} shopping market travel`
-      } else if (keywords.includes("food") || keywords.includes("restaurant") || keywords.includes("cafe")) {
-        themedQuery = `${data.to} food street local cuisine travel`
-      } else if (keywords.includes("park") || keywords.includes("garden")) {
-        themedQuery = `${data.to} park garden travel`
-      } else if (keywords.includes("mosque") || keywords.includes("temple") || keywords.includes("church")) {
-        themedQuery = `${data.to} landmark temple mosque church travel`
-      } else if (keywords.includes("night") || keywords.includes("skyline")) {
-        themedQuery = `${data.to} skyline night city travel`
-      } else if (keywords.includes("arrival") || keywords.includes("check in")) {
-        themedQuery = `${data.to} skyline city center travel`
-      }
-
+      const themedQuery = buildThemedQuery(data.to, day.title, day.items)
       const dayImage = await getPlaceImage(themedQuery, index + 1)
 
       return {
         id: index,
         title: day.title,
-        items: day.items,
-        image:
-          dayImage ||
-          fallbackDayImages[index % fallbackDayImages.length] ||
-          image?.imageUrl ||
-          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+        items: (day.items || []).filter(isUsefulLine),
+        image: dayImage || fallbackDayImage(index, image?.imageUrl),
       }
     })
   )
