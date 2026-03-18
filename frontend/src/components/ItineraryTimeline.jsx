@@ -11,6 +11,18 @@ function cleanLine(line) {
     .trim()
 }
 
+function isUsefulLine(line) {
+  if (!line) return false
+
+  const lower = line.toLowerCase()
+
+  if (lower === "--" || lower === "---" || lower === "—") return false
+  if (lower === "n/a") return false
+  if (lower.length < 2) return false
+
+  return true
+}
+
 function parseFallbackItinerary(plan, fallbackImage, destination) {
   if (!plan || typeof plan !== "string") return []
 
@@ -26,8 +38,7 @@ function parseFallbackItinerary(plan, fallbackImage, destination) {
   const lines = plan
     .split("\n")
     .map(cleanLine)
-    .filter(Boolean)
-    .filter((line) => line && line !== "---" && line !== "—" && line !== "--")
+    .filter(isUsefulLine)
 
   const dayHeaderRegex = /^day\s*\d+[:\-\s]/i
   const sections = []
@@ -40,23 +51,32 @@ function parseFallbackItinerary(plan, fallbackImage, destination) {
         title: line,
         items: [],
       }
-    } else {
-      if (!current) {
-        current = {
-          title: "Trip Overview",
-          items: [],
-        }
-      }
+    } else if (current) {
       current.items.push(line)
     }
   }
 
   if (current) sections.push(current)
 
+  if (!sections.length) {
+    return [
+      {
+        id: 0,
+        title: "Trip Overview",
+        items: lines.filter(isUsefulLine),
+        image:
+          fallbackImage ||
+          fallbackImages[0] ||
+          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+        destination,
+      },
+    ]
+  }
+
   return sections.map((section, index) => ({
     id: index,
     title: section.title,
-    items: section.items,
+    items: section.items.filter(isUsefulLine),
     image:
       fallbackImage ||
       fallbackImages[index % fallbackImages.length] ||
@@ -75,11 +95,12 @@ export default function ItineraryTimeline({
     if (Array.isArray(itineraryDays) && itineraryDays.length) {
       return itineraryDays.map((day, index) => ({
         ...day,
+        id: day.id ?? index,
+        items: Array.isArray(day.items) ? day.items.filter(isUsefulLine) : [],
         image:
           day.image ||
           heroImage ||
           "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
-        id: day.id ?? index,
       }))
     }
 
@@ -155,7 +176,7 @@ export default function ItineraryTimeline({
         </div>
 
         <div className="itineraryContentWrap">
-          {Array.isArray(activeDay.items) && activeDay.items.length ? (
+          {activeDay.items?.length ? (
             <div className="itineraryBullets">
               {activeDay.items.map((item, index) => (
                 <div key={index} className="itineraryBullet">
