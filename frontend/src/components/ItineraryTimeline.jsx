@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 
 function cleanLine(line) {
-  return line
+  return String(line || "")
     .replace(/^[-*]\s*/, "")
     .replace(/\*\*/g, "")
     .replace(/^#+\s*/, "")
@@ -23,10 +23,8 @@ function isUsefulLine(line) {
   return true
 }
 
-function parseFallbackItinerary(plan, fallbackImage, destination) {
-  if (!plan || typeof plan !== "string") return []
-
-  const fallbackImages = [
+function fallbackImages() {
+  return [
     "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
     "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
     "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1200&q=80",
@@ -34,53 +32,67 @@ function parseFallbackItinerary(plan, fallbackImage, destination) {
     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
     "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1200&q=80",
   ]
+}
 
-  const lines = plan
+function parseSlidesFromPlan(plan, heroImage, destination) {
+  if (!plan || typeof plan !== "string") return []
+
+  const normalized = plan.replace(/\r/g, "").trim()
+  const dayRegex = /(Day\s*\d+\s*:[\s\S]*?)(?=Day\s*\d+\s*:|$)/gi
+  const matches = [...normalized.matchAll(dayRegex)]
+
+  if (matches.length) {
+    return matches.map((match, index) => {
+      const block = match[0].trim()
+      const lines = block
+        .split("\n")
+        .map(cleanLine)
+        .filter(isUsefulLine)
+
+      return {
+        id: index,
+        title: lines[0] || `Day ${index + 1}`,
+        items: lines.slice(1),
+        image: heroImage || fallbackImages()[index % fallbackImages().length],
+        placeImages: [],
+        destination,
+      }
+    })
+  }
+
+  const lines = normalized
     .split("\n")
     .map(cleanLine)
     .filter(isUsefulLine)
 
-  const dayHeaderRegex = /^day\s*\d+[:\-\s]/i
-  const sections = []
-  let current = null
+  return lines.length
+    ? [
+        {
+          id: 0,
+          title: "Trip Overview",
+          items: lines,
+          image: heroImage || fallbackImages()[0],
+          placeImages: [],
+          destination,
+        },
+      ]
+    : []
+}
 
-  for (const line of lines) {
-    if (dayHeaderRegex.test(line)) {
-      if (current) sections.push(current)
-      current = {
-        title: line,
-        items: [],
-      }
-    } else if (current) {
-      current.items.push(line)
-    }
-  }
+function normalizeBackendSlides(itineraryDays, heroImage, destination) {
+  if (!Array.isArray(itineraryDays) || !itineraryDays.length) return []
 
-  if (current) sections.push(current)
-
-  if (!sections.length) {
-    return [
-      {
-        id: 0,
-        title: "Trip Overview",
-        items: lines.filter(isUsefulLine),
-        image:
-          fallbackImage ||
-          fallbackImages[0] ||
-          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
-        destination,
-      },
-    ]
-  }
-
-  return sections.map((section, index) => ({
-    id: index,
-    title: section.title,
-    items: section.items.filter(isUsefulLine),
+  return itineraryDays.map((day, index) => ({
+    id: day.id ?? index,
+    title: cleanLine(day.title || `Day ${index + 1}`),
+    items: Array.isArray(day.items)
+      ? day.items.map(cleanLine).filter(isUsefulLine)
+      : [],
     image:
-      fallbackImage ||
-      fallbackImages[index % fallbackImages.length] ||
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      day.image ||
+      heroImage ||
+      fallbackImages()[index % fallbackImages().length],
+    placeImages: Array.isArray(day.placeImages) ? day.placeImages : [],
     destination,
   }))
 }
@@ -92,19 +104,21 @@ export default function ItineraryTimeline({
   itineraryDays = [],
 }) {
   const slides = useMemo(() => {
-    if (Array.isArray(itineraryDays) && itineraryDays.length) {
-      return itineraryDays.map((day, index) => ({
-        ...day,
-        id: day.id ?? index,
-        items: Array.isArray(day.items) ? day.items.filter(isUsefulLine) : [],
-        image:
-          day.image ||
-          heroImage ||
-          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
-      }))
-    }
+    const backendSlides = normalizeBackendSlides(
+      itineraryDays,
+      heroImage,
+      destination
+    )
 
-    return parseFallbackItinerary(plan, heroImage, destination)
+    if (backendSlides.length > 1) return backendSlides
+
+    const parsedSlides = parseSlidesFromPlan(plan, heroImage, destination)
+
+    if (parsedSlides.length > 1) return parsedSlides
+
+    if (backendSlides.length === 1 && parsedSlides.length <= 1) return backendSlides
+
+    return parsedSlides
   }, [itineraryDays, plan, heroImage, destination])
 
   const [activeIndex, setActiveIndex] = useState(0)
@@ -176,6 +190,22 @@ export default function ItineraryTimeline({
         </div>
 
         <div className="itineraryContentWrap">
+          {activeDay.placeImages?.length ? (
+            <div className="dayPlacesStrip">
+              {activeDay.placeImages.map((place, index) => (
+                <div className="dayPlaceCard" key={index}>
+                  <img
+                    src={place.image}
+                    alt={place.name}
+                    className="dayPlaceImage"
+                    onError={handleImageError}
+                  />
+                  <span className="dayPlaceName">{place.name}</span>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
           {activeDay.items?.length ? (
             <div className="itineraryBullets">
               {activeDay.items.map((item, index) => (
@@ -191,18 +221,20 @@ export default function ItineraryTimeline({
         </div>
       </div>
 
-      <div className="sliderDots">
-        {slides.map((day, index) => (
-          <button
-            key={day.id ?? index}
-            type="button"
-            className={`sliderDot ${index === activeIndex ? "active" : ""}`}
-            onClick={() => setActiveIndex(index)}
-            aria-label={day.title}
-            title={day.title}
-          />
-        ))}
-      </div>
+      {slides.length > 1 ? (
+        <div className="sliderDots">
+          {slides.map((day, index) => (
+            <button
+              key={day.id ?? index}
+              type="button"
+              className={`sliderDot ${index === activeIndex ? "active" : ""}`}
+              onClick={() => setActiveIndex(index)}
+              aria-label={day.title}
+              title={day.title}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }
