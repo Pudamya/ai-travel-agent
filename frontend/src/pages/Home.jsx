@@ -1,11 +1,25 @@
 import { Link } from "react-router-dom"
+import { Plane, MapPinned, Hotel, Sparkles, ArrowRight } from "lucide-react"
 
 export default function Home() {
   return (
     <div className="page page-home">
       <header className="topbar">
         <div className="brand">
-          <div className="brand-badge">V</div>
+          <div className="brand-logoWrap">
+            <img
+              src="/voyageai-logo.png"
+              alt="VoyageAI logo"
+              className="brand-logo"
+              onError={(e) => {
+                e.currentTarget.style.display = "none"
+                const fallback = e.currentTarget.nextElementSibling
+                if (fallback) fallback.style.display = "grid"
+              }}
+            />
+            <div className="brand-badge brand-badge-fallback">V</div>
+          </div>
+
           <div>
             <h3>VoyageAI</h3>
             <span>Smart travel planning platform</span>
@@ -57,15 +71,87 @@ export default function Home() {
         </div>
 
         <div className="hero-visual">
-          <div className="glassCard">
-            <p className="miniTitle">Trip Snapshot</p>
-            <h3>Colombo → Dubai</h3>
-            <ul>
-              <li>Weather insights</li>
-              <li>Flights + fare forecast</li>
-              <li>Hotels + places map</li>
-              <li>AI-generated itinerary</li>
-            </ul>
+          <div className="tripSnapshotCard">
+            <div className="tripSnapshotTop">
+              <div>
+                <span className="tripSnapshotLabel">Featured Travel Preview</span>
+                <h3>VoyageAI Trip Snapshot</h3>
+              </div>
+              <div className="tripSnapshotPill">Live Demo Style</div>
+            </div>
+
+            <div className="tripRouteCard">
+              <div className="tripRouteCity">
+                <span>From</span>
+                <strong>Colombo</strong>
+              </div>
+
+              <div className="tripRouteArrow">
+                <ArrowRight size={18} />
+              </div>
+
+              <div className="tripRouteCity">
+                <span>To</span>
+                <strong>Dubai</strong>
+              </div>
+            </div>
+
+            <div className="tripSnapshotGrid">
+              <div className="tripSnapshotItem">
+                <div className="tripSnapshotIcon">
+                  <Sparkles size={18} />
+                </div>
+                <div>
+                  <strong>AI itinerary</strong>
+                  <span>Smart day-by-day travel flow</span>
+                </div>
+              </div>
+
+              <div className="tripSnapshotItem">
+                <div className="tripSnapshotIcon">
+                  <Plane size={18} />
+                </div>
+                <div>
+                  <strong>Flight insight</strong>
+                  <span>Estimated fare + ML prediction</span>
+                </div>
+              </div>
+
+              <div className="tripSnapshotItem">
+                <div className="tripSnapshotIcon">
+                  <Hotel size={18} />
+                </div>
+                <div>
+                  <strong>Nearby stays</strong>
+                  <span>Hotels near places to visit</span>
+                </div>
+              </div>
+
+              <div className="tripSnapshotItem">
+                <div className="tripSnapshotIcon">
+                  <MapPinned size={18} />
+                </div>
+                <div>
+                  <strong>Places map</strong>
+                  <span>Visual attraction discovery</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="tripSnapshotBottom">
+              <div className="tripMiniMetric">
+                <span>Duration</span>
+                <strong>5 Days</strong>
+              </div>
+              <div className="tripMiniMetric">
+                <span>Style</span>
+                <strong>City + Leisure</strong>
+              </div>
+              <div className="tripMiniMetric">
+                <span>Experience</span>
+                <strong>Premium UI</strong>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -83,7 +169,7 @@ export default function Home() {
           </article>
           <article className="featureCard">
             <h3>Flight pricing insight</h3>
-            <p>Understand current fare vs predicted fare using your ML model.</p>
+            <p>Understand estimated fare vs predicted fare using your ML model.</p>
           </article>
           <article className="featureCard">
             <h3>Hotel discovery</h3>
@@ -91,7 +177,7 @@ export default function Home() {
           </article>
           <article className="featureCard">
             <h3>Interactive places map</h3>
-            <p>Explore attractions visually instead of reading raw JSON output.</p>
+            <p>Explore attractions visually instead of reading raw output.</p>
           </article>
         </div>
       </section>
