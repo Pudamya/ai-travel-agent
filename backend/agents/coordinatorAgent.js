@@ -20,66 +20,62 @@ function cleanLine(line) {
 
 function isUsefulLine(line) {
   if (!line) return false
-
   const lower = line.toLowerCase()
-
   if (lower === "--" || lower === "---" || lower === "—") return false
   if (lower === "n/a") return false
   if (lower.length < 2) return false
-
   return true
 }
 
 function parseItineraryDays(plan) {
   if (!plan || typeof plan !== "string") return []
 
-  const lines = plan
+  const normalized = plan.replace(/\r/g, "").trim()
+  const dayRegex = /(Day\s*\d+\s*:[\s\S]*?)(?=Day\s*\d+\s*:|$)/gi
+  const matches = [...normalized.matchAll(dayRegex)]
+
+  if (matches.length) {
+    return matches.map((match, index) => {
+      const block = match[0].trim()
+      const lines = block
+        .split("\n")
+        .map(cleanLine)
+        .filter(isUsefulLine)
+
+      return {
+        id: index,
+        title: lines[0] || `Day ${index + 1}`,
+        items: lines.slice(1),
+      }
+    })
+  }
+
+  const lines = normalized
     .split("\n")
     .map(cleanLine)
     .filter(isUsefulLine)
 
-  const dayHeaderRegex = /^day\s*\d+[:\-\s]/i
-  const sections = []
-  let current = null
-
-  for (const line of lines) {
-    if (dayHeaderRegex.test(line)) {
-      if (current) sections.push(current)
-      current = {
-        title: line,
-        items: [],
-      }
-    } else if (current) {
-      current.items.push(line)
-    }
-  }
-
-  if (current) sections.push(current)
-
-  return sections
+  return lines.length
+    ? [{ id: 0, title: "Trip Overview", items: lines }]
+    : []
 }
 
 function buildThemedQuery(destination, dayTitle, dayItems = []) {
   const text = `${dayTitle} ${(dayItems || []).join(" ")}`.toLowerCase()
 
-  if (
-    text.includes("museum") ||
-    text.includes("gallery") ||
-    text.includes("architecture")
-  ) {
+  if (text.includes("museum") || text.includes("gallery") || text.includes("architecture")) {
     return `${destination} museum architecture landmark travel`
   }
-
   if (
     text.includes("beach") ||
     text.includes("coast") ||
     text.includes("sea") ||
     text.includes("bay") ||
+    text.includes("cliff") ||
     text.includes("island")
   ) {
-    return `${destination} beach coast ocean travel`
+    return `${destination} beach coast ocean cliff travel`
   }
-
   if (
     text.includes("shopping") ||
     text.includes("market") ||
@@ -88,18 +84,17 @@ function buildThemedQuery(destination, dayTitle, dayItems = []) {
   ) {
     return `${destination} shopping market street travel`
   }
-
   if (
     text.includes("food") ||
     text.includes("restaurant") ||
     text.includes("cafe") ||
     text.includes("dinner") ||
     text.includes("lunch") ||
-    text.includes("breakfast")
+    text.includes("breakfast") ||
+    text.includes("seafood")
   ) {
     return `${destination} food street local cuisine travel`
   }
-
   if (
     text.includes("park") ||
     text.includes("garden") ||
@@ -108,7 +103,6 @@ function buildThemedQuery(destination, dayTitle, dayItems = []) {
   ) {
     return `${destination} park garden nature travel`
   }
-
   if (
     text.includes("mosque") ||
     text.includes("temple") ||
@@ -117,7 +111,6 @@ function buildThemedQuery(destination, dayTitle, dayItems = []) {
   ) {
     return `${destination} temple mosque church landmark travel`
   }
-
   if (
     text.includes("night") ||
     text.includes("skyline") ||
@@ -125,16 +118,13 @@ function buildThemedQuery(destination, dayTitle, dayItems = []) {
   ) {
     return `${destination} skyline night city travel`
   }
-
   if (
     text.includes("arrival") ||
     text.includes("check in") ||
-    text.includes("check-in") ||
-    text.includes("arrival day")
+    text.includes("check-in")
   ) {
     return `${destination} skyline city center travel`
   }
-
   if (
     text.includes("departure") ||
     text.includes("farewell") ||
@@ -163,6 +153,34 @@ function fallbackDayImage(index, heroImage) {
   )
 }
 
+function extractRelevantPlaces(dayTitle, dayItems = [], allPlaces = [], destination = "") {
+  const haystack = `${dayTitle} ${(dayItems || []).join(" ")}`.toLowerCase()
+
+  const matched = (allPlaces || []).filter((place) => {
+    const name = String(place?.name || "").toLowerCase().trim()
+    if (!name) return false
+
+    // exact containment
+    if (haystack.includes(name)) return true
+
+    // partial token match
+    const tokens = name.split(/\s+/).filter((t) => t.length > 3)
+    return tokens.some((token) => haystack.includes(token))
+  })
+
+  if (matched.length) return matched.slice(0, 4)
+
+  // fallback generic highlights from available places
+  if (allPlaces?.length) return allPlaces.slice(0, 4)
+
+  // if nothing exists, create generic items
+  return [
+    { name: `${destination} City Center` },
+    { name: `${destination} Landmark` },
+    { name: `${destination} Food Street` },
+  ]
+}
+
 export async function runTravelPlanner(data) {
   console.log("Planner input:", data)
 
@@ -182,8 +200,7 @@ export async function runTravelPlanner(data) {
       return {
         ...place,
         id: place.id ?? index,
-        previewImage:
-          placeImage || fallbackDayImage(index, image?.imageUrl),
+        previewImage: placeImage || fallbackDayImage(index, image?.imageUrl),
       }
     })
   )
@@ -246,11 +263,35 @@ export async function runTravelPlanner(data) {
       const themedQuery = buildThemedQuery(data.to, day.title, day.items)
       const dayImage = await getPlaceImage(themedQuery, index + 1)
 
+      const relevantPlaces = extractRelevantPlaces(
+        day.title,
+        day.items,
+        enrichedPlaces,
+        data.to
+      )
+
+      const placeImages = await Promise.all(
+        relevantPlaces.slice(0, 4).map(async (place, placeIndex) => {
+          const img =
+            place.previewImage ||
+            (await getPlaceImage(
+              `${place.name || data.to} ${data.to} attraction travel`,
+              placeIndex + 1
+            ))
+
+          return {
+            name: place.name || `${data.to} Highlight`,
+            image: img || fallbackDayImage(placeIndex, image?.imageUrl),
+          }
+        })
+      )
+
       return {
         id: index,
         title: day.title,
         items: (day.items || []).filter(isUsefulLine),
         image: dayImage || fallbackDayImage(index, image?.imageUrl),
+        placeImages,
       }
     })
   )
