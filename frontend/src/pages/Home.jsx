@@ -8,7 +8,7 @@ export default function Home() {
         <div className="brand">
           <div className="brand-logoWrap">
             <img
-              src="/voyageai-logo.png"
+              src="/voyageai-logo.jpeg"
               alt="VoyageAI logo"
               className="brand-logo"
               onError={(e) => {

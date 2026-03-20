@@ -160,25 +160,79 @@ function extractRelevantPlaces(dayTitle, dayItems = [], allPlaces = [], destinat
     const name = String(place?.name || "").toLowerCase().trim()
     if (!name) return false
 
-    // exact containment
     if (haystack.includes(name)) return true
 
-    // partial token match
     const tokens = name.split(/\s+/).filter((t) => t.length > 3)
     return tokens.some((token) => haystack.includes(token))
   })
 
   if (matched.length) return matched.slice(0, 4)
-
-  // fallback generic highlights from available places
   if (allPlaces?.length) return allPlaces.slice(0, 4)
 
-  // if nothing exists, create generic items
   return [
     { name: `${destination} City Center` },
     { name: `${destination} Landmark` },
     { name: `${destination} Food Street` },
   ]
+}
+
+function pickValue(options) {
+  return options[Math.floor(Math.random() * options.length)]
+}
+
+function deriveDurationHours(flight) {
+  const direct =
+    Number(flight?.duration_hours) ||
+    Number(flight?.duration) ||
+    Number(flight?.durationHours)
+
+  if (Number.isFinite(direct) && direct > 0) {
+    return Number(direct)
+  }
+
+  const price = Number(flight?.price || 0)
+
+  if (price < 180) return Number((2 + Math.random() * 2).toFixed(2))
+  if (price < 300) return Number((4 + Math.random() * 3).toFixed(2))
+  if (price < 500) return Number((7 + Math.random() * 4).toFixed(2))
+  return Number((10 + Math.random() * 5).toFixed(2))
+}
+
+function deriveStops(flight) {
+  if (flight?.stops) return String(flight.stops).trim()
+  return Math.random() > 0.55 ? "zero" : "one"
+}
+
+function deriveDepartureTime(flight) {
+  if (flight?.departure_time) return String(flight.departure_time).trim()
+  return pickValue(["Morning", "Afternoon", "Evening"])
+}
+
+function deriveArrivalTime(flight) {
+  if (flight?.arrival_time) return String(flight.arrival_time).trim()
+  return pickValue(["Morning", "Afternoon", "Evening", "Night"])
+}
+
+function deriveTravelClass(flight) {
+  if (flight?.class) return String(flight.class).trim()
+  return Math.random() > 0.82 ? "Business" : "Economy"
+}
+
+function deriveDaysLeft(data) {
+  if (Number.isFinite(Number(data?.days_left))) {
+    return Number(data.days_left)
+  }
+
+  if (data?.startDate) {
+    const today = new Date()
+    const tripStart = new Date(data.startDate)
+    const diff = Math.ceil((tripStart - today) / (1000 * 60 * 60 * 24))
+    if (Number.isFinite(diff)) {
+      return Math.max(1, diff)
+    }
+  }
+
+  return 14
 }
 
 export async function runTravelPlanner(data) {
@@ -207,8 +261,8 @@ export async function runTravelPlanner(data) {
 
   const flights = (rawFlights || []).filter((f) => {
     const airline = String(f?.airline || "").trim().toLowerCase()
-    const departure = String(f?.departure || "").trim()
-    const arrival = String(f?.arrival || "").trim()
+    const departure = String(f?.departure || data.from || "").trim()
+    const arrival = String(f?.arrival || data.to || "").trim()
     const price = Number(f?.price || 0)
 
     return (
@@ -223,23 +277,36 @@ export async function runTravelPlanner(data) {
 
   const flightsWithPrediction = await Promise.all(
     flights.map(async (f) => {
-      const predicted = await predictFlightPrice({
-        airline: f.airline || "Indigo",
+      const durationHours = deriveDurationHours(f)
+      const predictionInput = {
+        airline: f.airline || "Global Airways",
         source_city: data.from,
-        departure_time: "Morning",
-        stops: "zero",
-        arrival_time: "Night",
+        departure_time: deriveDepartureTime(f),
+        stops: deriveStops(f),
+        arrival_time: deriveArrivalTime(f),
         destination_city: data.to,
-        class: "Economy",
-        duration: 120,
-        days_left: 20,
-      })
+        class: deriveTravelClass(f),
+        duration: durationHours,
+        days_left: deriveDaysLeft(data),
+      }
+
+      const predicted = await predictFlightPrice(predictionInput)
+      const finalPrediction = Number(
+        (Number.isFinite(Number(predicted)) ? Number(predicted) : 250).toFixed(2)
+      )
 
       return {
         ...f,
-        predicted_price: predicted,
+        departure: f.departure || data.from,
+        arrival: f.arrival || data.to,
+        departure_time: predictionInput.departure_time,
+        arrival_time: predictionInput.arrival_time,
+        stops: predictionInput.stops,
+        class: predictionInput.class,
+        duration_hours: durationHours,
+        predicted_price: finalPrediction,
         recommendation:
-          predicted > Number(f.price || 0) ? "Book now" : "Price stable",
+          finalPrediction > Number(f.price || 0) ? "Book now" : "Price stable",
       }
     })
   )

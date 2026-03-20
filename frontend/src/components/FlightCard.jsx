@@ -1,6 +1,6 @@
 export default function FlightCard({ flight }) {
-  const currentFare = Number(flight.price || 0)
-  const predictedFare = Number(flight.predicted_price || 0)
+  const currentFare = Math.round(Number(flight.price || 0))
+  const predictedFare = Math.round(Number(flight.predicted_price || 0))
   const difference = predictedFare - currentFare
   const isCheaperPrediction = difference < 0
 
@@ -17,7 +17,7 @@ export default function FlightCard({ flight }) {
 
       <div className="priceGrid">
         <div className="priceBox">
-          <span className="label">Current Fare</span>
+          <span className="label">Estimated Fare</span>
           <strong>${currentFare}</strong>
         </div>
         <div className="priceBox">
