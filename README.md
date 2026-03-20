@@ -18,6 +18,8 @@ It generates:
 * AI-estimated flight prices
 
 All combined into a **modern, interactive travel dashboard**.
+<img width="2046" height="1011" alt="image" src="https://github.com/user-attachments/assets/e9950203-eaf6-4bd8-acde-e7b07f92abbe" />
+
 
 ---
 
@@ -33,6 +35,8 @@ All combined into a **modern, interactive travel dashboard**.
   * Place discovery
   * Hotel recommendations
   * Flight price prediction
+  <img width="2031" height="1198" alt="image" src="https://github.com/user-attachments/assets/acd28828-08cc-400b-83d9-532dd2eda6d8" />
+
 
 ---
 
@@ -45,6 +49,8 @@ All combined into a **modern, interactive travel dashboard**.
   * Timings & activities
   * Relevant images
 * Interactive **slider UI (1 day = 1 slide)**
+  <img width="2093" height="1275" alt="image" src="https://github.com/user-attachments/assets/aa35d849-58f3-40c5-bef3-64ef8199aa7f" />
+
 
 ---
 
@@ -53,6 +59,8 @@ All combined into a **modern, interactive travel dashboard**.
 * Uses real-time weather data
 * Matches weather with **selected travel dates**
 * Improves trip decision-making
+  <img width="1976" height="1145" alt="image" src="https://github.com/user-attachments/assets/b5d685f9-c269-433a-9354-7b29f48ad955" />
+
 
 ---
 
@@ -86,6 +94,8 @@ All combined into a **modern, interactive travel dashboard**.
   * Duration
   * Stops
   * Days left
+    <img width="2253" height="1286" alt="image" src="https://github.com/user-attachments/assets/8cdffed1-05b4-4376-a866-aa332dfc9258" />
+
 
 > Note: Prices are **AI-estimated**, not real-time booking prices
 
