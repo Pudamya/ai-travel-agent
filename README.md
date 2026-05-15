@@ -1,13 +1,13 @@
-# ✈️ VoyageAI – Multi-Agent AI Travel Planner
+# ✈️ VoyageAI –  AI Travel Planner
 
 
->  Intelligent travel planning powered by **Multi-Agent AI + Machine Learning**
+>  Intelligent travel planning powered by ** AI + Machine Learning**
 
 ---
 
 ## Overview
 
-**VoyageAI** is a full-stack **AI-powered travel planning system** that helps users plan trips intelligently using a **multi-agent architecture**.
+**VoyageAI** is a full-stack **AI-powered travel planning system** that helps users plan trips intelligently.
 
 It generates:
 
@@ -25,7 +25,7 @@ All combined into a **modern, interactive travel dashboard**.
 
 ## Key Features
 
-### Multi-Agent AI System
+### AI System
 
 * Coordinator Agent manages the workflow
 * Specialized agents for:
@@ -220,7 +220,7 @@ npm run dev
 
 ## Innovation
 
-VoyageAI introduces a **multi-agent architecture** where different AI modules collaborate to simulate a real-world travel assistant.
+VoyageAI introduces an architecture where different AI modules collaborate to simulate a real-world travel assistant.
 
 Unlike traditional systems:
 
